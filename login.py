@@ -109,15 +109,22 @@ def logout(driver):
         print(f"Error during logout: {str(e)}")
         return False
 
-def load_accounts():
+def load_accounts(env_file=None):
     """Load account credentials from environment file"""
-    load_dotenv()
+    # Load specified env file or default to .env
+    env_path = env_file or os.getenv("ENV_PATH", ".env")
+    print(f"Loading environment from: {env_path}")
+
+    if not os.path.exists(env_path):
+        raise ValueError(f"Environment file {env_path} not found")
+
+    load_dotenv(dotenv_path=env_path)
 
     email = os.getenv('AIVEN_EMAIL')
     password = os.getenv('AIVEN_PASSWORD')
 
     if not email or not password:
-        raise ValueError("AIVEN_EMAIL and AIVEN_PASSWORD must be set in .env file")
+        raise ValueError(f"AIVEN_EMAIL and AIVEN_PASSWORD must be set in {env_path}")
 
     return email, password
 
@@ -195,10 +202,14 @@ def login_to_aiven(driver, email, password):
 
 def main():
     """Main function to handle single account login"""
+    parser = argparse.ArgumentParser(description='Aiven Console Login Automation')
+    parser.add_argument('--env', type=str, help='Path to environment file (e.g., .env.dev, .env.prod)')
+    args = parser.parse_args()
+
     driver = None
     try:
-        # Load the account credentials
-        email, password = load_accounts()
+        # Load the account credentials with specified env file
+        email, password = load_accounts(args.env)
 
         # Initialize driver
         driver = init_driver()
