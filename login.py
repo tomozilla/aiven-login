@@ -202,6 +202,7 @@ def login_to_aiven(driver, email, password):
 
 def main():
     """Main function to handle single account login"""
+    driver = None
     try:
         # Load the account credentials
         email, password = load_accounts()
@@ -219,13 +220,13 @@ def main():
             raise Exception("Logout failed")
 
         print("\nLogin and logout complete.")
-        driver.quit()
 
     except Exception as e:
         print(f"Error: {str(e)}")
+        return 1
+    finally:
         if driver:
             driver.quit()
-        return 1
 
     return 0
 
