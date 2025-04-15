@@ -25,19 +25,12 @@ def init_driver():
     options.add_argument("--disable-setuid-sandbox")
     options.add_argument("--single-process")  # More stable on limited resource systems
 
-
-    # Set path to ChromeDriver
-    chromedriver_path = "/usr/local/bin/chromedriver"
-
     # Add logging for debugging
     print(f"Chrome version: {os.popen('google-chrome --version').read().strip()}")
     print(f"ChromeDriver version: {os.popen('chromedriver --version').read().strip()}")
-    print(f"Using ChromeDriver at: {chromedriver_path}")
 
-    return webdriver.Chrome(
-        executable_path=chromedriver_path,
-        options=options
-    )
+    # Let Selenium handle the ChromeDriver
+    return webdriver.Chrome(options=options)
 
 def wait_and_remove_overlay(driver):
     """Wait for and remove any overlay that might block interaction"""
