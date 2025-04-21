@@ -118,7 +118,13 @@ def load_accounts(env_file=None):
     if not os.path.exists(env_path):
         raise ValueError(f"Environment file {env_path} not found")
 
-    load_dotenv(dotenv_path=env_path)
+    # Clear any existing environment variables
+    if 'AIVEN_EMAIL' in os.environ:
+        del os.environ['AIVEN_EMAIL']
+    if 'AIVEN_PASSWORD' in os.environ:
+        del os.environ['AIVEN_PASSWORD']
+
+    load_dotenv(dotenv_path=env_path, override=True)
 
     email = os.getenv('AIVEN_EMAIL')
     password = os.getenv('AIVEN_PASSWORD')
@@ -126,6 +132,7 @@ def load_accounts(env_file=None):
     if not email or not password:
         raise ValueError(f"AIVEN_EMAIL and AIVEN_PASSWORD must be set in {env_path}")
 
+    print(f"Loaded email from {env_path}: {email[:3]}...{email[-8:]}")
     return email, password
 
 def login_to_aiven(driver, email, password):
